@@ -6,9 +6,9 @@ import { TUser } from "@/utils/types";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-export default function InvitePage() {
+function InviteUI() {
   const [inviterData, setInviterData] = useState<TUser | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -120,5 +120,13 @@ export default function InvitePage() {
         </Link>
       </motion.div>
     </div>
+  );
+}
+
+export function InvitePage() {
+  return (
+    <Suspense fallback="Loading...">
+      <InviteUI />
+    </Suspense>
   );
 }
