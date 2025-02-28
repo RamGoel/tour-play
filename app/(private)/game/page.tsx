@@ -6,7 +6,7 @@ import { API } from "@/lib/axios";
 import { useStore } from "@/lib/store";
 import { TUser } from "@/utils/types";
 import { motion } from "framer-motion";
-import { Repeat2 } from "lucide-react";
+import { CheckCircle2, Repeat2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type Quiz = {
@@ -24,7 +24,14 @@ type Feedback = {
 };
 
 export default function GamePage() {
-  const { user, setUser, setShowConfetti, setShowSadFace } = useStore();
+  const {
+    user,
+    setUser,
+    setShowConfetti,
+    setShowSadFace,
+    correctAnswers,
+    incorrectAnswers,
+  } = useStore();
   const [quiz, setQuiz] = useState<null | Quiz>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<null | Feedback>(null);
@@ -61,12 +68,14 @@ export default function GamePage() {
       const newScore = (user?.score || 0) + 1;
       API.put("/auth", { score: newScore });
       setUser({ ...user, score: newScore } as TUser);
+      useStore.setState({ correctAnswers: correctAnswers + 1 });
     } else {
       setShowSadFace(true);
       timeoutId = setTimeout(() => {
         setShowSadFace(false);
         clearTimeout(timeoutId);
       }, 4000);
+      useStore.setState({ incorrectAnswers: incorrectAnswers + 1 });
     }
   };
 
@@ -74,9 +83,23 @@ export default function GamePage() {
 
   return (
     <div className="flex-grow bg-gradient-to-br from-teal-100 via-blue-200 to-indigo-300 flex flex-col items-center justify-center p-6">
-      <h1 className="text-4xl font-bold text-indigo-800 mb-8 drop-shadow-md">
-        Where Am I?
-      </h1>
+      <div className="flex max-w-2xl items-center justify-between mb-8 w-full ">
+        <h1 className="text-4xl font-bold text-indigo-800 drop-shadow-md">
+          Where Am I?
+        </h1>
+        <div className="flex items-center gap-4">
+          {correctAnswers > 0 ? (
+            <p className="text-md flex items-center gap-1 font-semibold text-green-500">
+              <CheckCircle2 /> Correct Answers: {correctAnswers}
+            </p>
+          ) : null}
+          {incorrectAnswers > 0 ? (
+            <p className="text-md flex items-center gap-1 font-semibold text-red-500">
+              <X /> Incorrect Answers: {incorrectAnswers}
+            </p>
+          ) : null}
+        </div>
+      </div>
 
       <div className="max-w-2xl w-full mb-10">
         {quiz.clues.map((clue, index) => (
