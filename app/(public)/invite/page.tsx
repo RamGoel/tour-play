@@ -123,7 +123,7 @@ function InviteUI() {
   );
 }
 
-export function InvitePage() {
+export default function InvitePage() {
   return (
     <Suspense fallback="Loading...">
       <InviteUI />
