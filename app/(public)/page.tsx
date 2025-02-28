@@ -6,9 +6,9 @@ import Link from "next/link";
 export default async function LandingPage() {
   return (
     <div
-      className={`min-h-screen bg-white flex flex-col justify-center items-center text-gray-800`}
+      className={`min-h-screen flex gap-10 bg-white justify-center items-center text-gray-800`}
     >
-      <header className="text-center py-8">
+      <div className="text-center py-8 w-[70%]">
         <Image
           src={"/media/logo.png"}
           className="mx-auto"
@@ -23,9 +23,29 @@ export default async function LandingPage() {
           Test your travel knowledge with clever clues, uncover fascinating
           facts, and compete with friends in a global adventure.
         </p>
-      </header>
+        <section className="mt-8 w-1/2 mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="p-4">
+            <p className="text-3xl font-bold text-gray-900">
+              {destinationArray.length}+
+            </p>
+            <p className="mt-1 text-gray-600">Destinations</p>
+          </div>
+          <div className="p-4">
+            <p className="text-3xl font-bold text-gray-900">Countless</p>
+            <p className="mt-1 text-gray-600">Clues</p>
+          </div>
+          <div className="p-4">
+            <p className="text-3xl font-bold text-gray-900">Engaging</p>
+            <p className="mt-1 text-gray-600">Gameplay</p>
+          </div>
+        </section>
 
-      <Link href="/game" className="">
+        <div className="mt-16 text-sm text-gray-500">
+          <p>Built by RamGoel | Powered by Next.js & Grok</p>
+        </div>
+      </div>
+
+      <Link href="/game" className="w-[30%]">
         <section className="bg-blue-600 flex items-center group hover:scale-90 transition-all duration-200 justify-center w-[300px] h-[250px] rounded-xl p-6 md:p-8 max-w-lg text-center shadow-sm border border-gray-200">
           <div className="text-white flex flex-col gap-1 group-hover:scale-[1.2] group-hover:gap-2 transition-all duration-200">
             <PlayCircle
@@ -37,27 +57,6 @@ export default async function LandingPage() {
           </div>
         </section>
       </Link>
-
-      <section className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-        <div className="p-4">
-          <p className="text-3xl font-bold text-gray-900">
-            {destinationArray.length}+
-          </p>
-          <p className="mt-1 text-gray-600">Destinations</p>
-        </div>
-        <div className="p-4">
-          <p className="text-3xl font-bold text-gray-900">Countless</p>
-          <p className="mt-1 text-gray-600">Clues</p>
-        </div>
-        <div className="p-4">
-          <p className="text-3xl font-bold text-gray-900">Engaging</p>
-          <p className="mt-1 text-gray-600">Gameplay</p>
-        </div>
-      </section>
-
-      <footer className="mt-16 text-sm text-gray-500">
-        <p>Built by RamGoel | Powered by Next.js & Grok</p>
-      </footer>
     </div>
   );
 }

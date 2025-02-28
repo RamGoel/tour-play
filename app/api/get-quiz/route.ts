@@ -22,6 +22,9 @@ export async function GET() {
       clues: correctDestination.clues,
       options: options,
       correctAnswer: correctDestination.destination,
+      funFact: correctDestination.funFact,
+      trivia: correctDestination.trivia,
+      surprise: correctDestination.surprise,
     },
     { status: 200 },
   );

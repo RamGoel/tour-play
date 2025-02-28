@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { toPng } from "html-to-image";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 const Header = () => {
   const { user } = useStore();
@@ -37,7 +38,7 @@ const Header = () => {
   // Copy link to clipboard
   const copyToClipboard = () => {
     navigator.clipboard.writeText(inviteLink);
-    alert("Link copied to clipboard!");
+    toast.success("Copied to clipboard");
   };
 
   return (
