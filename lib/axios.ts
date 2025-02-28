@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 
 export const API = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: "/api",
 });
 
 export const parseAxiosMessage = (err: unknown) => {
