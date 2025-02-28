@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 export interface Destination {
   destination: string;
   clues: string[];
@@ -5,3 +7,5 @@ export interface Destination {
   trivia: string;
   surprise: string;
 }
+
+export type TUser = User;

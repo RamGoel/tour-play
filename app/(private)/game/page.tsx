@@ -1,26 +1,30 @@
 "use client";
 
-import { destinationArray } from "@/lib/data";
-import { getRandomQuiz } from "@/utils/helpers";
+import Loader from "@/components/Loader";
+import { API } from "@/lib/axios";
+import { useStore } from "@/lib/store";
+import { TUser } from "@/utils/types";
 import { motion } from "framer-motion";
+import { Repeat2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function GamePage() {
+  const { user, setUser } = useStore();
   const [quiz, setQuiz] = useState<{
     clues: string[];
     options: string[];
     correctAnswer: string;
   } | null>(null);
+
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{
     isCorrect: boolean;
     message: string;
   } | null>(null);
 
-  // Fetch a new quiz on mount and reset
-  const fetchNewQuiz = () => {
-    const newQuiz = getRandomQuiz(destinationArray);
-    setQuiz(newQuiz);
+  const fetchNewQuiz = async () => {
+    const response = await API.get("/get-quiz");
+    setQuiz(response.data);
     setSelectedAnswer(null);
     setFeedback(null);
   };
@@ -29,7 +33,6 @@ export default function GamePage() {
     fetchNewQuiz();
   }, []);
 
-  // Handle answer selection
   const handleAnswer = (answer: string) => {
     if (!quiz) return;
     setSelectedAnswer(answer);
@@ -40,18 +43,22 @@ export default function GamePage() {
         ? "Woohoo! You nailed it! 🌍"
         : "Oops, not quite! Try again! ✈️",
     });
+
+    if (isCorrect) {
+      const newScore = (user?.score || 0) + 1;
+      API.put("/auth", { score: newScore });
+      setUser({ ...user, score: newScore } as TUser);
+    }
   };
 
-  if (!quiz) return <div>Loading...</div>;
+  if (!quiz) return <Loader />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-100 via-blue-200 to-indigo-300 flex flex-col items-center justify-center p-6">
-      {/* Title */}
+    <div className="flex-grow bg-gradient-to-br from-teal-100 via-blue-200 to-indigo-300 flex flex-col items-center justify-center p-6">
       <h1 className="text-4xl font-bold text-indigo-800 mb-8 drop-shadow-md">
         Where Am I?
       </h1>
 
-      {/* Clues Section */}
       <div className="max-w-2xl w-full mb-10">
         {quiz.clues.map((clue, index) => (
           <motion.div
@@ -66,7 +73,6 @@ export default function GamePage() {
         ))}
       </div>
 
-      {/* Options Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl w-full">
         {quiz.options.map((option) => (
           <motion.button
@@ -88,7 +94,6 @@ export default function GamePage() {
         ))}
       </div>
 
-      {/* Feedback Section */}
       {feedback && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -105,10 +110,14 @@ export default function GamePage() {
             <span className="font-semibold">{quiz.correctAnswer}</span>
           </p>
           <button
-            onClick={fetchNewQuiz}
-            className="mt-4 px-6 py-2 bg-yellow-400 text-black font-semibold rounded-md hover:bg-yellow-500 transition duration-200"
+            onClick={() => {
+              setQuiz(null);
+              fetchNewQuiz();
+            }}
+            className="mt-4 flex mx-auto items-center justify-center gap-2 px-3 py-2 cursor-pointer rounded-full bg-orange-400 text-white font-semibold hover:bg-orange-500 transition duration-200"
           >
-            Next Destination
+            <Repeat2 size={30} />
+            Play Again
           </button>
         </motion.div>
       )}

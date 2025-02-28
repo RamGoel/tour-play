@@ -1,6 +1,7 @@
-import { Destination } from "./types";
+import { destinationArray } from "@/lib/data";
 
-export function getRandomQuiz(destinations: Destination[]) {
+export async function GET() {
+  const destinations = destinationArray;
   if (destinations.length < 4) {
     throw new Error(
       "At least 4 destinations are required to generate options.",
@@ -16,9 +17,12 @@ export function getRandomQuiz(destinations: Destination[]) {
     () => Math.random() - 0.5,
   );
 
-  return {
-    clues: correctDestination.clues,
-    options: options,
-    correctAnswer: correctDestination.destination,
-  };
+  return Response.json(
+    {
+      clues: correctDestination.clues,
+      options: options,
+      correctAnswer: correctDestination.destination,
+    },
+    { status: 200 },
+  );
 }

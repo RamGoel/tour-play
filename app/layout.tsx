@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { DM_Sans } from 'next/font/google';
+import { DM_Sans } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
-
 const font = DM_Sans({
   subsets: ["latin"],
-  weight: ["400", "600", "700"], // Regular, Semi-bold, Bold
-  display: "swap", // Ensures smooth font loading
+  weight: ["400", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -20,10 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${font.className}`}
-      >
+      <body className={`${font.className}`}>
         {children}
+        <Toaster />
       </body>
     </html>
   );
