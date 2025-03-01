@@ -35,9 +35,7 @@ export default function GamePage() {
   const [visibleClues, setVisibleClues] = useState(1);
   const [timeRemaining, setTimeRemaining] = useState(5);
   const [timerActive, setTimerActive] = useState(false);
-  const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(
-    null,
-  );
+  const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout>();
 
   const [showItem, setShowItem] = useState(false);
   const scoreRef = useRef<HTMLDivElement>(null);
@@ -72,11 +70,8 @@ export default function GamePage() {
         if (prev <= 1) {
           clearInterval(interval);
           setTimerActive(false);
-          // Show next clue after timer expires
-          setVisibleClues((prev) =>
-            Math.min(prev + 1, quiz?.clues.length || 1),
-          );
-          return 5; // Reset timer for next clue
+          setVisibleClues(2);
+          return 5;
         }
         return prev - 1;
       });
@@ -136,7 +131,12 @@ export default function GamePage() {
   };
 
   const fetchNewQuiz = async () => {
-    setQuiz(null);
+    const response = await API.get("/get-quiz");
+    setQuiz({
+      ...response.data,
+      correctAnswer: customDecode(response.data.correctAnswer),
+      funFact: customDecode(response.data.funFact),
+    });
     setSelectedAnswer(null);
     setFeedback(null);
     setVisibleClues(1);
@@ -144,12 +144,6 @@ export default function GamePage() {
     setShowConfetti(false);
     setShowSadFace(false);
     startTimer();
-    const response = await API.get("/get-quiz");
-    setQuiz({
-      ...response.data,
-      correctAnswer: customDecode(response.data.correctAnswer),
-      funFact: customDecode(response.data.funFact),
-    });
   };
 
   useEffect(() => {
