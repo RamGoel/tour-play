@@ -17,15 +17,17 @@ const Header = () => {
   const [dynamicImage, setDynamicImage] = useState<string | null>(null);
   const scoreRef = useRef<HTMLDivElement>(null);
 
-  // Generate invite link and dynamic image
   const handleChallengeClick = async () => {
     if (!user?.username) return;
+
+    if (user.score === 0) {
+      return toast.error("Please do atleast 1 score");
+    }
 
     const url = `${window.location.origin}/invite?inviter=${encodeURIComponent(user?.username)}`;
     setInviteLink(url);
     setShowItem(true);
 
-    // Generate dynamic image from score section
     if (scoreRef.current) {
       const image = await toPng(scoreRef.current);
       setDynamicImage(image);
@@ -35,15 +37,8 @@ const Header = () => {
     setIsModalOpen(true);
   };
 
-  // Copy link to clipboard
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(inviteLink);
-    toast.success("Copied to clipboard");
-  };
-
   return (
     <>
-      {/* Main Header */}
       <div className="flex items-center justify-between w-full p-4 bg-gradient-to-r from-blue-50 via-indigo-100 to-purple-200 shadow-md">
         <div className="flex items-center gap-3">
           <div className="relative w-12 h-12 flex items-center justify-center bg-indigo-600 rounded-full shadow-md">
@@ -91,12 +86,12 @@ const Header = () => {
 
       <div
         style={{
-          position: "fixed", // Change from absolute to fixed
-          visibility: showItem ? "visible" : "hidden", // Use visibility instead of opacity
+          position: "fixed",
+          visibility: showItem ? "visible" : "hidden",
           zIndex: -1,
-          left: "50%", // Center horizontally
-          top: "50%", // Center vertically
-          transform: "translate(-50%, -50%)", // Center alignment
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
         }}
         className="w-fit "
       >
@@ -129,72 +124,97 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Challenge Modal */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={() => setIsModalOpen(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.8, y: 50 }}
-              className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-xl border border-indigo-200"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold ">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-                    Challenge Your Friends!
-                  </span>{" "}
-                  🌍
-                </h2>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-
-              {dynamicImage && (
-                <div className="mb-6">
-                  <Image
-                    width={500}
-                    height={500}
-                    src={dynamicImage}
-                    alt="Score Preview"
-                    className="rounded-lg shadow-md w-full"
-                  />
-                </div>
-              )}
-
-              <div className="bg-gray-50 p-3 rounded-lg flex items-center justify-between border border-gray-200">
-                <p className="text-sm text-gray-700 truncate flex-1">
-                  {inviteLink}
-                </p>
-                <button
-                  onClick={copyToClipboard}
-                  className="ml-2 px-3 py-1 bg-indigo-500 cursor-pointer text-white rounded-md hover:bg-indigo-600 transition duration-200 flex items-center gap-2"
-                >
-                  <Copy size={16} />
-                  <span>Copy</span>
-                </button>
-              </div>
-
-              <div className="mt-6 text-sm text-gray-500 text-center">
-                Share this link with friends to see if they can beat your
-                geography knowledge!
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <ChallengeModal
+        isOpen={isModalOpen}
+        setOpen={setIsModalOpen}
+        inviteLink={inviteLink}
+        dynamicImage={dynamicImage || ""}
+      />
     </>
+  );
+};
+
+const ChallengeModal = ({
+  isOpen,
+  setOpen,
+  inviteLink,
+  dynamicImage,
+}: {
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
+  inviteLink: string;
+  dynamicImage: string;
+}) => {
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(inviteLink);
+    toast.success("Copied to clipboard");
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={() => setOpen(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.8, y: 50 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.8, y: 50 }}
+            className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-xl border border-indigo-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold ">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+                  Challenge Your Friends!
+                </span>{" "}
+                🌍
+              </h2>
+              <button
+                onClick={() => setOpen(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {dynamicImage && (
+              <div className="mb-6">
+                <Image
+                  width={500}
+                  height={500}
+                  src={dynamicImage}
+                  alt="Score Preview"
+                  className="rounded-lg shadow-md w-full"
+                />
+              </div>
+            )}
+
+            <div className="bg-gray-50 p-3 rounded-lg flex items-center justify-between border border-gray-200">
+              <p className="text-sm text-gray-700 truncate flex-1">
+                {inviteLink}
+              </p>
+              <button
+                onClick={copyToClipboard}
+                className="ml-2 px-3 py-1 bg-indigo-500 cursor-pointer text-white rounded-md hover:bg-indigo-600 transition duration-200 flex items-center gap-2"
+              >
+                <Copy size={16} />
+                <span>Copy</span>
+              </button>
+            </div>
+
+            <div className="mt-6 text-sm text-gray-500 text-center">
+              Share this link with friends to see if they can beat your
+              geography knowledge!
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

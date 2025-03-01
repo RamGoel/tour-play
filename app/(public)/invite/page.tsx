@@ -69,7 +69,6 @@ function InviteUI() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-200 flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Map Elements */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <pattern
@@ -89,7 +88,6 @@ function InviteUI() {
         </svg>
       </div>
 
-      {/* Animated Elements */}
       <motion.div
         className="absolute top-16 left-16 text-indigo-500 opacity-30"
         variants={floatingVariants}
@@ -107,14 +105,12 @@ function InviteUI() {
         <MapPin size={60} />
       </motion.div>
 
-      {/* Main Content Card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7 }}
         className="bg-white rounded-xl p-8 max-w-md w-full text-center shadow-xl border border-indigo-200 relative z-10"
       >
-        {/* Globe Icon */}
         <motion.div
           className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-indigo-600 rounded-full p-4 shadow-lg"
           initial={{ y: -20, opacity: 0 }}
@@ -130,7 +126,6 @@ function InviteUI() {
           initial="hidden"
           animate="visible"
         >
-          {/* Invitation Message */}
           <motion.h1
             variants={itemVariants}
             className="text-3xl font-bold text-indigo-800 mb-3"
@@ -146,7 +141,6 @@ function InviteUI() {
             </p>
           </motion.div>
 
-          {/* Inviter's Score Panel */}
           <motion.div
             variants={itemVariants}
             className="bg-indigo-50 rounded-lg p-4 mb-6 border border-indigo-100"
@@ -165,7 +159,6 @@ function InviteUI() {
             </p>
           </motion.div>
 
-          {/* Play Now Button */}
           <Link href="/auth">
             <motion.button
               variants={itemVariants}
@@ -179,18 +172,13 @@ function InviteUI() {
           </Link>
         </motion.div>
 
-        {/* World landmarks silhouette decoration */}
         <div className="absolute bottom-0 left-0 right-0 h-16 overflow-hidden opacity-10">
           <div className="flex justify-around items-end w-full h-full">
             <div className="w-6 h-12 bg-indigo-800 rounded-t-md"></div>{" "}
-            {/* Eiffel Tower */}
             <div className="w-10 h-10 bg-indigo-800 rounded-t-full"></div>{" "}
-            {/* Taj Mahal */}
-            <div className="w-8 h-14 bg-indigo-800"></div> {/* Skyscraper */}
+            <div className="w-8 h-14 bg-indigo-800"></div>
             <div className="w-4 h-8 bg-indigo-800 rounded-t-md"></div>{" "}
-            {/* Pyramid */}
             <div className="w-12 h-8 bg-indigo-800 rounded-t-md"></div>{" "}
-            {/* Bridge */}
           </div>
         </div>
       </motion.div>

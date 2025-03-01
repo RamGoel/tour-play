@@ -16,6 +16,7 @@ interface TStore {
   incorrectAnswers: number;
   correctAnswers: number;
 }
+
 export const useStore = create<TStore>((set) => ({
   user: null,
   setUser: (data) => set({ user: data }),

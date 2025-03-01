@@ -6,7 +6,6 @@ import { Compass, Globe, MapPin } from "lucide-react";
 const GlobetrotterLoader = ({ customMessage }: { customMessage?: string }) => {
   const loadingText = customMessage ?? "Exploring destinations";
 
-  // Define the small pin animations
   const pins = [
     { delay: 0, x: "-12vw", y: "-8vh" },
     { delay: 0.3, x: "15vw", y: "-15vh" },
@@ -19,7 +18,6 @@ const GlobetrotterLoader = ({ customMessage }: { customMessage?: string }) => {
   return (
     <div className="fixed inset-0 bg-indigo-50 flex flex-col items-center justify-center z-50">
       <div className="relative w-full h-full flex flex-col items-center justify-center">
-        {/* Background map elements */}
         <div className="absolute inset-0 overflow-hidden opacity-10">
           <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 border-2 border-indigo-300 rounded-full"></div>
           <div className="absolute top-1/3 left-1/3 w-1/3 h-1/3 border-2 border-indigo-400 rounded-full"></div>
@@ -44,7 +42,6 @@ const GlobetrotterLoader = ({ customMessage }: { customMessage?: string }) => {
           </svg>
         </div>
 
-        {/* Animated globe in the center */}
         <motion.div
           className="relative mb-12"
           animate={{
@@ -84,7 +81,6 @@ const GlobetrotterLoader = ({ customMessage }: { customMessage?: string }) => {
               <Globe size={120} strokeWidth={1.5} />
             </motion.div>
 
-            {/* Animated pins coming out from the globe */}
             {pins.map((pin, index) => (
               <motion.div
                 key={index}
@@ -107,7 +103,6 @@ const GlobetrotterLoader = ({ customMessage }: { customMessage?: string }) => {
               </motion.div>
             ))}
 
-            {/* Compass animation around the globe */}
             <motion.div
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-600 opacity-30"
               style={{ width: "200px", height: "200px" }}
@@ -130,7 +125,6 @@ const GlobetrotterLoader = ({ customMessage }: { customMessage?: string }) => {
           </div>
         </motion.div>
 
-        {/* Loading text with ellipsis animation */}
         <motion.div
           className="text-xl font-medium text-indigo-800 mb-6"
           animate={{ opacity: [0.7, 1, 0.7] }}

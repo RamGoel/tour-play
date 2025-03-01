@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 
-// Custom hook to get window dimensions
 const useWindowSize = () => {
   const [size, setSize] = useState({ width: 0, height: 0 });
   useEffect(() => {
@@ -21,15 +20,15 @@ const useWindowSize = () => {
 export default function ConfettiFlow() {
   const { showConfetti } = useStore();
   const { width, height } = useWindowSize();
-  const [confettiKey, setConfettiKey] = useState(0); // Key to force re-render
+  const [confettiKey, setConfettiKey] = useState(0);
 
   useEffect(() => {
     if (showConfetti) {
-      setConfettiKey((prev) => prev + 1); // Increment key to restart confetti
+      setConfettiKey((prev) => prev + 1);
       const timeout = setTimeout(
         () => setConfettiKey((prev) => prev + 1),
         4000,
-      ); // Reset after 4s
+      );
       return () => clearTimeout(timeout);
     }
   }, [showConfetti]);
@@ -47,7 +46,7 @@ export default function ConfettiFlow() {
       className="fixed inset-0 pointer-events-none z-50"
     >
       <Confetti
-        key={confettiKey} // Forces re-render on key change
+        key={confettiKey}
         width={width}
         height={height}
         numberOfPieces={300}

@@ -39,7 +39,6 @@ export default function AuthPage() {
         transition={{ duration: 0.5 }}
         className="bg-white/90 backdrop-blur-md rounded-xl p-8 max-w-md w-full shadow-lg"
       >
-        {/* Title */}
         <h1 className="text-3xl font-bold text-indigo-800 text-center mb-6">
           Welcome, Traveler! ✈️
         </h1>
@@ -47,7 +46,6 @@ export default function AuthPage() {
           Pick a username to start your Globetrotter adventure!
         </p>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label
@@ -75,7 +73,6 @@ export default function AuthPage() {
             )}
           </div>
 
-          {/* Submit Button */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
