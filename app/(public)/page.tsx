@@ -110,8 +110,8 @@ export default function LandingPage() {
           </motion.div>
 
           <motion.div
-            initial={{ x: 20, opacity: 0 }}
-            animate={isLoaded ? { x: 0, opacity: 1 } : {}}
+            initial={{ y: 20, opacity: 0 }}
+            animate={isLoaded ? { y: 0, opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
             <Link href="/auth">
@@ -132,8 +132,8 @@ export default function LandingPage() {
         <div className="flex flex-col md:flex-row items-center gap-12">
           <motion.div
             className="w-full md:w-1/2 space-y-6"
-            initial={{ opacity: 0, x: -50 }}
-            animate={isLoaded ? { opacity: 1, x: 0 } : {}}
+            initial={{ opacity: 0, y: -10 }}
+            animate={isLoaded ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.5 }}
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 leading-tight">

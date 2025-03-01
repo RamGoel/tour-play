@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Compass, Globe, MapPin } from "lucide-react";
 
-const GlobetrotterLoader = ({ customMessage }: { customMessage?: string }) => {
+const Loader = ({ customMessage }: { customMessage?: string }) => {
   const loadingText = customMessage ?? "Exploring destinations";
 
   const pins = [
@@ -143,4 +143,4 @@ const GlobetrotterLoader = ({ customMessage }: { customMessage?: string }) => {
   );
 };
 
-export default GlobetrotterLoader;
+export default Loader;

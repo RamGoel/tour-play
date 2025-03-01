@@ -1,5 +1,6 @@
 "use client";
 
+import Loader from "@/components/Loader";
 import { API, parseAxiosMessage } from "@/lib/axios";
 import { useStore } from "@/lib/store";
 import { AxiosError } from "axios";
@@ -11,6 +12,7 @@ import { toast } from "react-hot-toast";
 export default function AuthPage() {
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,6 +23,7 @@ export default function AuthPage() {
     }
 
     try {
+      setLoading(true);
       const response = await API.post("/auth", {
         username,
       });
@@ -31,11 +34,16 @@ export default function AuthPage() {
       if ((err as AxiosError)?.response?.status === 400) {
         router.push("/game");
       } else {
+        setLoading(false);
         toast.error(parseAxiosMessage(err));
         console.log(err);
       }
     }
   };
+
+  if (isLoading) {
+    return <Loader customMessage="Setting you up" />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-100 via-blue-200 to-indigo-300 flex items-center justify-center p-6">
