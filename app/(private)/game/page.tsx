@@ -13,6 +13,7 @@ import {
   Lightbulb,
   MapPin,
   RefreshCw,
+  Timer,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -43,23 +44,41 @@ export default function GamePage() {
   const [quiz, setQuiz] = useState<null | Quiz>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<null | Feedback>(null);
+  const [visibleClues, setVisibleClues] = useState(1);
+  const [timeRemaining, setTimeRemaining] = useState(5);
+  const [timerActive, setTimerActive] = useState(false);
+  const [timerInterval, setTimerInterval] = useState<any>(null);
 
-  const fetchNewQuiz = async () => {
-    const response = await API.get("/get-quiz");
-    setQuiz(response.data);
-    setSelectedAnswer(null);
-    setFeedback(null);
+  const startTimer = () => {
+    setTimerActive(true);
+    const interval = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setTimerActive(false);
+          // Show next clue after timer expires
+          setVisibleClues((prev) =>
+            Math.min(prev + 1, quiz?.clues.length || 1),
+          );
+          return 5; // Reset timer for next clue
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    setTimerInterval(interval);
   };
-
-  useEffect(() => {
-    fetchNewQuiz();
-  }, []);
 
   const handleAnswer = async (answer: string) => {
     if (!quiz) return;
+
+    // Clear the timer when user selects an answer
+    if (timerInterval) clearInterval(timerInterval);
+    setTimerActive(false);
+
     setSelectedAnswer(answer);
     await new Promise((res) => setTimeout(res, 300)); // delay
     const isCorrect = answer === quiz.correctAnswer;
+
     setFeedback({
       isCorrect,
       message: isCorrect
@@ -75,7 +94,11 @@ export default function GamePage() {
         setShowConfetti(false);
         clearTimeout(timeoutId);
       }, 4000);
-      const newScore = (user?.score || 0) + 1;
+
+      // Award points based on number of visible clues
+      const pointsEarned = visibleClues === 1 ? 2 : 1;
+      const newScore = (user?.score || 0) + pointsEarned;
+
       API.put("/auth", { score: newScore });
       setUser({ ...user, score: newScore } as TUser);
       useStore.setState({ correctAnswers: correctAnswers + 1 });
@@ -89,6 +112,23 @@ export default function GamePage() {
       useStore.setState({ incorrectAnswers: incorrectAnswers + 1 });
     }
   };
+
+  const fetchNewQuiz = async () => {
+    const response = await API.get("/get-quiz");
+    setQuiz(response.data);
+    setSelectedAnswer(null);
+    setFeedback(null);
+    setVisibleClues(1);
+    setTimeRemaining(5);
+    startTimer();
+  };
+
+  useEffect(() => {
+    fetchNewQuiz();
+    return () => {
+      if (timerInterval) clearInterval(timerInterval);
+    };
+  }, []);
 
   if (!quiz) return <Loader />;
 
@@ -120,17 +160,23 @@ export default function GamePage() {
         {/* Main game container */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden mb-5">
           {/* Question header */}
-          <div className="bg-indigo-600 text-white p-4">
+          <div className="bg-indigo-600 text-white p-4 flex justify-between items-center">
             <h2 className="text-2xl font-semibold flex items-center">
               <MapPin className="mr-2" />
               Where Am I?
             </h2>
+            {!feedback && timerActive && (
+              <div className="flex items-center bg-indigo-500 rounded-full px-3 py-1">
+                <Timer className="text-white mr-1" size={18} />
+                <span className="font-bold">{timeRemaining}s</span>
+              </div>
+            )}
           </div>
 
           {/* Clues section */}
           <div className="p-6">
             <div className="space-y-4 mb-8">
-              {quiz.clues.map((clue, index) => (
+              {quiz.clues.slice(0, visibleClues).map((clue, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
@@ -147,6 +193,13 @@ export default function GamePage() {
                   </p>
                 </motion.div>
               ))}
+
+              {!feedback && visibleClues === 1 && (
+                <p className="text-sm text-indigo-600 font-medium flex items-center mt-4">
+                  <Timer className="mr-1" size={16} />
+                  Answer now for 2 points! Next clue in {timeRemaining}s...
+                </p>
+              )}
             </div>
 
             {/* Options grid */}
@@ -179,6 +232,13 @@ export default function GamePage() {
                   >
                     {feedback.message}
                   </p>
+                  {feedback.isCorrect && (
+                    <p className="text-green-600 font-medium">
+                      {visibleClues === 1
+                        ? "Amazing! You earned 2 points for answering with just one clue!"
+                        : "Good job! You earned 1 point."}
+                    </p>
+                  )}
                 </div>
 
                 {/* Fun fact */}
