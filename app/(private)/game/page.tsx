@@ -1,36 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import AnswerOptions from "@/components/AnswerOptions";
+import ChallengeModal from "@/components/ChallengeModal";
+import CluesList from "@/components/CluesList";
 import Loader from "@/components/Loader";
+import QuizFeedback from "@/components/QuizFeedback";
+import StatsHeader from "@/components/StatsHeader";
 import { API } from "@/lib/axios";
 import { useStore } from "@/lib/store";
 import { playCancelSound, playSuccessSound } from "@/utils/helpers";
-import { TUser } from "@/utils/types";
-import { motion } from "framer-motion";
-import {
-  CheckCircle,
-  Globe,
-  Lightbulb,
-  MapPin,
-  RefreshCw,
-  Timer,
-  X,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-
-type Quiz = {
-  clues: string[];
-  options: string[];
-  correctAnswer: string;
-  funFact: string;
-  trivia: string;
-  surprise: string;
-};
-
-type Feedback = {
-  isCorrect: boolean;
-  message: string;
-};
+import { Feedback, Quiz, TUser } from "@/utils/types";
+import { toPng } from "html-to-image";
+import { MapPin, Timer, Trophy } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function GamePage() {
   const {
@@ -47,7 +30,35 @@ export default function GamePage() {
   const [visibleClues, setVisibleClues] = useState(1);
   const [timeRemaining, setTimeRemaining] = useState(5);
   const [timerActive, setTimerActive] = useState(false);
-  const [timerInterval, setTimerInterval] = useState<any>(null);
+  const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(
+    null,
+  );
+
+  const [showItem, setShowItem] = useState(false);
+  const scoreRef = useRef<HTMLDivElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [inviteLink, setInviteLink] = useState("");
+  const [dynamicImage, setDynamicImage] = useState<string | null>(null);
+
+  const handleChallengeClick = async () => {
+    if (!user?.username) return;
+
+    if (user.score === 0) {
+      return toast.error("Please do atleast 1 score");
+    }
+
+    const url = `${window.location.origin}/invite?inviter=${encodeURIComponent(user?.id)}`;
+    setInviteLink(url);
+    setShowItem(true);
+
+    if (scoreRef.current) {
+      const image = await toPng(scoreRef.current);
+      setDynamicImage(image);
+    }
+
+    setShowItem(false);
+    setIsModalOpen(true);
+  };
 
   const startTimer = () => {
     setTimerActive(true);
@@ -86,7 +97,7 @@ export default function GamePage() {
         : "Oops, not quite! Try again! ✈️",
     });
 
-    let timeoutId: any = "x";
+    let timeoutId: NodeJS.Timeout;
     if (isCorrect) {
       playSuccessSound();
       setShowConfetti(true);
@@ -134,31 +145,57 @@ export default function GamePage() {
 
   return (
     <div className="flex-grow bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-200 flex flex-col items-center justify-center">
-      <div className="w-full max-w-4xl">
-        {/* Header with logo and stats */}
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-5 w-full">
-          <div className="flex items-center mb-4 sm:mb-0">
-            <Globe className="text-indigo-600 mr-2" size={32} />
-            <h1 className="text-4xl font-bold text-indigo-800 drop-shadow-md">
-              Globetrotter
-            </h1>
-          </div>
+      {/* Sharing score screenshot element (hidden) */}
+      <div
+        style={{
+          position: "fixed",
+          visibility: showItem ? "visible" : "hidden",
+          zIndex: -1,
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+        className="w-fit"
+      >
+        <div
+          ref={scoreRef}
+          className="flex p-3 flex-col items-start gap-2 bg-gradient-to-r from-blue-50 via-indigo-100 to-purple-200 rounded-lg shadow-md max-w-md"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full">
+              <p className="text-md font-semibold uppercase">
+                {user?.username?.[0]}
+              </p>
+            </div>
 
-          <div className="flex items-center gap-4">
-            <div className="bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 shadow-md">
-              <CheckCircle className="text-green-500" size={20} />
-              <p className="font-medium text-black">{correctAnswers}</p>
-
-              <div className="h-6 w-px bg-gray-300 mx-2"></div>
-
-              <X className="text-red-500" size={20} />
-              <p className="font-medium text-black">{incorrectAnswers}</p>
+            <div className="flex-1">
+              <p className="text-md font-semibold text-gray-800">
+                {user?.username} scored
+              </p>
+              <div className="flex items-center gap-2">
+                <Trophy className="text-yellow-500" size={20} />
+                <p className="text-2xl font-bold text-indigo-600">
+                  {user?.score || 0} points
+                </p>
+              </div>
             </div>
           </div>
+          <p className="text-sm text-indigo-600 font-medium text-center">
+            Think you can beat this? Try Globetrotter now!
+          </p>
         </div>
+      </div>
+
+      <div className="w-full max-w-4xl">
+        {/* Header with stats and challenge button */}
+        <StatsHeader
+          correctAnswers={correctAnswers}
+          incorrectAnswers={incorrectAnswers}
+          onChallengeClick={handleChallengeClick}
+        />
 
         {/* Main game container */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden mb-5">
+        <div className="bg-white/90 mx-4 md:mx-0 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden mb-5">
           {/* Question header */}
           <div className="bg-indigo-600 text-white p-4 flex justify-between items-center">
             <h2 className="text-2xl font-semibold flex items-center">
@@ -173,97 +210,42 @@ export default function GamePage() {
             )}
           </div>
 
-          {/* Clues section */}
+          {/* Game content */}
           <div className="p-6">
-            <div className="space-y-4 mb-8">
-              {quiz.clues.slice(0, visibleClues).map((clue, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.3 }}
-                  className="bg-indigo-50 rounded-lg p-4 border-l-4 border-yellow-400 shadow-sm"
-                >
-                  <p className="text-lg italic text-gray-700 flex">
-                    <Lightbulb
-                      className="mr-2 text-yellow-500 flex-shrink-0 mt-1"
-                      size={20}
-                    />
-                    <span>&quot;{clue}&quot;</span>
-                  </p>
-                </motion.div>
-              ))}
+            {/* Clues section */}
+            <CluesList
+              clues={quiz.clues}
+              visibleClues={visibleClues}
+              feedback={feedback}
+              timeRemaining={timeRemaining}
+            />
 
-              {!feedback && visibleClues === 1 && (
-                <p className="text-sm text-indigo-600 font-medium flex items-center mt-4">
-                  <Timer className="mr-1" size={16} />
-                  Answer now for 2 points! Next clue in {timeRemaining}s...
-                </p>
-              )}
-            </div>
-
-            {/* Options grid */}
+            {/* Answer options or feedback */}
             {!feedback ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {quiz.options.map((option) => (
-                  <motion.button
-                    key={option}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => handleAnswer(option)}
-                    className={`p-4 rounded-lg text-white font-semibold text-lg shadow-md transition-colors duration-200 ${selectedAnswer === option ? (selectedAnswer === quiz.correctAnswer ? "bg-green-500" : "bg-red-500") : "bg-indigo-600 hover:bg-indigo-700"} `}
-                  >
-                    {option}
-                  </motion.button>
-                ))}
-              </div>
+              <AnswerOptions
+                options={quiz.options}
+                selectedAnswer={selectedAnswer}
+                correctAnswer={quiz.correctAnswer}
+                onSelect={handleAnswer}
+              />
             ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center"
-              >
-                {/* Feedback section */}
-                <div
-                  className={`rounded-lg p-4 mb-6 ${feedback.isCorrect ? "bg-green-100 border border-green-300" : "bg-red-100 border border-red-300"}`}
-                >
-                  <p
-                    className={`text-2xl font-bold mb-2 ${feedback.isCorrect ? "text-green-600" : "text-red-600"}`}
-                  >
-                    {feedback.message}
-                  </p>
-                  {feedback.isCorrect && (
-                    <p className="text-green-600 font-medium">
-                      {visibleClues === 1
-                        ? "Amazing! You earned 2 points for answering with just one clue!"
-                        : "Good job! You earned 1 point."}
-                    </p>
-                  )}
-                </div>
-
-                {/* Fun fact */}
-                <div className="bg-yellow-50 rounded-lg p-4 mb-6 border border-yellow-200">
-                  <h3 className="text-xl font-semibold text-yellow-700 mb-2">
-                    Did You Know?
-                  </h3>
-                  <p className="text-gray-700">{quiz.funFact}</p>
-                </div>
-
-                {/* Next question button */}
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={fetchNewQuiz}
-                  className="mx-auto mt-4 flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-200 shadow-md"
-                >
-                  <RefreshCw size={20} />
-                  Next Destination
-                </motion.button>
-              </motion.div>
+              <QuizFeedback
+                feedback={feedback}
+                visibleClues={visibleClues}
+                funFact={quiz.funFact}
+                onNextQuestion={fetchNewQuiz}
+              />
             )}
           </div>
         </div>
       </div>
+
+      <ChallengeModal
+        isOpen={isModalOpen}
+        setOpen={setIsModalOpen}
+        inviteLink={inviteLink}
+        dynamicImage={dynamicImage || ""}
+      />
     </div>
   );
 }

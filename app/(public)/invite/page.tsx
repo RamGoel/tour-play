@@ -10,6 +10,34 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.6 } },
+};
+
+const floatingVariants = {
+  float: {
+    y: [0, -10, 0],
+    transition: {
+      duration: 3,
+      repeat: Infinity,
+      repeatType: "reverse" as const,
+      ease: "easeInOut",
+    },
+  },
+};
+
 function InviteUI() {
   const [inviterData, setInviterData] = useState<TUser | null>(null);
   const searchParams = useSearchParams();
@@ -30,40 +58,8 @@ function InviteUI() {
     }
   }, [inviter, router]);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.6 } },
-  };
-
-  const floatingVariants = {
-    float: {
-      y: [0, -10, 0],
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        repeatType: "reverse" as const,
-        ease: "easeInOut",
-      },
-    },
-  };
-
   if (!inviterData) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Loader customMessage="Discovering your destination..." />
-      </div>
-    );
+    return <Loader customMessage="Discovering your destination..." />;
   }
 
   return (

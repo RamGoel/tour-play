@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from "framer-motion";
 import {
   Brain,
@@ -17,7 +16,6 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-// Sample destinations data (in production, this would come from your API)
 const sampleDestinations = [
   { name: "Eiffel Tower", city: "Paris", country: "France" },
   { name: "Colosseum", city: "Rome", country: "Italy" },
@@ -27,16 +25,9 @@ const sampleDestinations = [
 
 export default function LandingPage() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [activeFeature, setActiveFeature] = useState(0);
 
   useEffect(() => {
     setIsLoaded(true);
-
-    const interval = setInterval(() => {
-      setActiveFeature((prev) => (prev + 1) % 3);
-    }, 5000);
-
-    return () => clearInterval(interval);
   }, []);
 
   const features = [
@@ -128,7 +119,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-12 py-16 md:py-24">
+      <section className="container mx-auto px-5 md:px-12 py-16 md:py-24">
         <div className="flex flex-col md:flex-row items-center gap-12">
           <motion.div
             className="w-full md:w-1/2 space-y-6"
@@ -147,10 +138,10 @@ export default function LandingPage() {
               guess?
             </p>
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex flex-col md:flex-row gap-4 pt-4">
               <Link href="/game">
                 <motion.button
-                  className="px-8 py-3 bg-indigo-600 text-white rounded-full shadow-lg flex items-center gap-2 hover:bg-indigo-700 transition-all"
+                  className="px-8 py-3 w-full md:w-fit justify-center bg-indigo-600 text-white rounded-full shadow-lg flex items-center gap-2 hover:bg-indigo-700 transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -161,7 +152,7 @@ export default function LandingPage() {
 
               <Link href="#how-it-works">
                 <motion.button
-                  className="px-8 py-3 border-2 border-indigo-600 text-indigo-600 rounded-full flex items-center gap-2 hover:bg-indigo-50 transition-all"
+                  className="px-8 py-3 w-full md:w-fit justify-center border-2 border-indigo-600 text-indigo-600 rounded-full flex items-center gap-2 hover:bg-indigo-50 transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -250,7 +241,10 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="container mx-auto px-12 py-16 md:py-24">
+      <section
+        id="features"
+        className="container mx-auto px-5 md:px-12 py-16 md:py-24"
+      >
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
@@ -271,7 +265,7 @@ export default function LandingPage() {
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className={`bg-white rounded-xl shadow-lg p-8 ${index === activeFeature ? "ring-2 ring-indigo-500" : ""}`}
+              className={`bg-white rounded-xl shadow-lg p-8`}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
