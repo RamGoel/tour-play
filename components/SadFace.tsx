@@ -38,6 +38,8 @@ const SadFaceAnimation = () => {
     exit: { opacity: 0, y: 30 },
   };
 
+  if (!showSadFace) return;
+
   return (
     <AnimatePresence>
       {showSadFace && (
