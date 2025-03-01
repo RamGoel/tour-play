@@ -6,7 +6,6 @@ import { useStore } from "@/lib/store";
 import { APP_NAME } from "@/utils/constants";
 import { AxiosError } from "axios";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -14,7 +13,6 @@ export default function AuthPage() {
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,11 +27,13 @@ export default function AuthPage() {
         username,
       });
       useStore.setState({ user: response.data });
-      router.push("/game");
+      // setLoading(false);
+      window.location.href = "/game";
     } catch (err) {
       // login if already exists
       if ((err as AxiosError)?.response?.status === 400) {
-        router.push("/game");
+        setLoading(false);
+        window.location.href = "/game";
       } else {
         setLoading(false);
         toast.error(parseAxiosMessage(err));
