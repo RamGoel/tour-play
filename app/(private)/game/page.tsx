@@ -4,6 +4,7 @@
 import Loader from "@/components/Loader";
 import { API } from "@/lib/axios";
 import { useStore } from "@/lib/store";
+import { playCancelSound, playSuccessSound } from "@/utils/helpers";
 import { TUser } from "@/utils/types";
 import { motion } from "framer-motion";
 import {
@@ -68,6 +69,7 @@ export default function GamePage() {
 
     let timeoutId: any = "x";
     if (isCorrect) {
+      playSuccessSound();
       setShowConfetti(true);
       timeoutId = setTimeout(() => {
         setShowConfetti(false);
@@ -78,6 +80,7 @@ export default function GamePage() {
       setUser({ ...user, score: newScore } as TUser);
       useStore.setState({ correctAnswers: correctAnswers + 1 });
     } else {
+      playCancelSound();
       setShowSadFace(true);
       timeoutId = setTimeout(() => {
         setShowSadFace(false);
