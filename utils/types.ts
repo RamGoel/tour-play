@@ -13,8 +13,6 @@ export type Quiz = {
   options: string[];
   correctAnswer: string;
   funFact: string;
-  trivia: string;
-  surprise: string;
 };
 
 export type Feedback = {

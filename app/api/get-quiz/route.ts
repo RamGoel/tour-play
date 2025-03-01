@@ -1,4 +1,5 @@
 import { destinationArray } from "@/lib/data";
+import { customEncode } from "@/utils/helpers";
 
 export async function GET() {
   const destinations = destinationArray;
@@ -21,10 +22,8 @@ export async function GET() {
     {
       clues: correctDestination.clues,
       options: options,
-      correctAnswer: correctDestination.destination,
-      funFact: correctDestination.funFact,
-      trivia: correctDestination.trivia,
-      surprise: correctDestination.surprise,
+      correctAnswer: customEncode(correctDestination.destination),
+      funFact: customEncode(correctDestination.funFact),
     },
     { status: 200 },
   );

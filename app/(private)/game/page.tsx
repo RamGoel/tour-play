@@ -9,7 +9,11 @@ import StatsHeader from "@/components/StatsHeader";
 import { API } from "@/lib/axios";
 import { useStore } from "@/lib/store";
 import { CHARS } from "@/utils/constants";
-import { playCancelSound, playSuccessSound } from "@/utils/helpers";
+import {
+  customDecode,
+  playCancelSound,
+  playSuccessSound,
+} from "@/utils/helpers";
 import { Feedback, Quiz, TUser } from "@/utils/types";
 import { toPng } from "html-to-image";
 import { MapPin, Timer, Trophy } from "lucide-react";
@@ -61,18 +65,6 @@ export default function GamePage() {
     setIsModalOpen(true);
   };
 
-  const onKeyDown = (ev: KeyboardEvent) => {
-    try {
-      ev.preventDefault();
-      console.log(ev);
-      if (CHARS.includes(ev.key?.toUpperCase())) {
-        handleAnswer(ev.key.toUpperCase());
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const startTimer = () => {
     setTimerActive(true);
     const interval = setInterval(() => {
@@ -96,7 +88,6 @@ export default function GamePage() {
   const handleAnswer = async (answer: string) => {
     if (!quiz) return;
 
-    console.log(answer);
     // if keystroke is passed, get option from keystroke
     if (answer.length === 1) {
       answer = quiz.options[CHARS.indexOf(answer)];
@@ -154,16 +145,12 @@ export default function GamePage() {
     setShowSadFace(false);
     startTimer();
     const response = await API.get("/get-quiz");
-    setQuiz(response.data);
+    setQuiz({
+      ...response.data,
+      correctAnswer: customDecode(response.data.correctAnswer),
+      funFact: customDecode(response.data.funFact),
+    });
   };
-
-  useEffect(() => {
-    window.addEventListener("keypress", onKeyDown);
-
-    return () => {
-      window.removeEventListener("keypress", onKeyDown);
-    };
-  }, [quiz]);
 
   useEffect(() => {
     fetchNewQuiz();
@@ -270,9 +257,6 @@ export default function GamePage() {
           </div>
         </div>
       </div>
-      <p className="text-sm uppercase tracking-widest opacity-70 text-black">
-        Click option, or press keys to select
-      </p>
 
       <ChallengeModal
         isOpen={isModalOpen}
