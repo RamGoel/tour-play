@@ -1,7 +1,14 @@
 import { destinationArray } from "@/lib/data";
+import { COOKIE_KEY } from "@/utils/constants";
 import { customEncode } from "@/utils/helpers";
+import { cookies } from "next/headers";
 
 export async function GET() {
+  const userId = (await cookies()).get(COOKIE_KEY)?.value || "";
+
+  if (!userId) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const destinations = destinationArray;
   if (destinations.length < 4) {
     throw new Error(

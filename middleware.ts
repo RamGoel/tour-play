@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { HEADER_AUTH_KEY } from "./utils/constants";
+import { COOKIE_KEY } from "./utils/constants";
 
 export function middleware(request: NextRequest) {
-  const userIdCookie = request.cookies.get(HEADER_AUTH_KEY);
+  const userIdCookie = request.cookies.get(COOKIE_KEY);
   const isGameRoute = request.nextUrl.pathname.startsWith("/game");
 
   if (isGameRoute && !userIdCookie) {

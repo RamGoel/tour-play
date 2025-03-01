@@ -3,6 +3,7 @@
 import Loader from "@/components/Loader";
 import { API, parseAxiosMessage } from "@/lib/axios";
 import { useStore } from "@/lib/store";
+import { APP_NAME } from "@/utils/constants";
 import { AxiosError } from "axios";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -57,7 +58,7 @@ export default function AuthPage() {
           Welcome, Traveler! ✈️
         </h1>
         <p className="text-gray-600 text-center mb-8">
-          Pick a username to start your Globetrotter adventure!
+          Pick a username to start your {APP_NAME} adventure!
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -73,7 +74,7 @@ export default function AuthPage() {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g., GlobeTrotter123"
+              placeholder="e.g., JohnDoe"
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-400"
             />
             {error && (

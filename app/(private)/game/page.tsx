@@ -8,7 +8,7 @@ import QuizFeedback from "@/components/QuizFeedback";
 import StatsHeader from "@/components/StatsHeader";
 import { API } from "@/lib/axios";
 import { useStore } from "@/lib/store";
-import { CHARS } from "@/utils/constants";
+import { APP_NAME, CHARS } from "@/utils/constants";
 import {
   customDecode,
   playCancelSound,
@@ -163,7 +163,6 @@ export default function GamePage() {
 
   return (
     <div className="flex-grow bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-200 flex flex-col items-center justify-center">
-      {/* Sharing score screenshot element (hidden) */}
       <div
         style={{
           position: "fixed",
@@ -199,22 +198,19 @@ export default function GamePage() {
             </div>
           </div>
           <p className="text-sm text-indigo-600 font-medium text-center">
-            Think you can beat this? Try Globetrotter now!
+            Think you can beat this? Try {APP_NAME} now!
           </p>
         </div>
       </div>
 
       <div className="w-full max-w-4xl">
-        {/* Header with stats and challenge button */}
         <StatsHeader
           correctAnswers={correctAnswers}
           incorrectAnswers={incorrectAnswers}
           onChallengeClick={handleChallengeClick}
         />
 
-        {/* Main game container */}
         <div className="bg-white/90 mx-4 md:mx-0 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden mb-5">
-          {/* Question header */}
           <div className="bg-indigo-600 text-white p-4 flex justify-between items-center">
             <h2 className="text-2xl font-semibold flex items-center">
               <MapPin className="mr-2" />
@@ -228,9 +224,7 @@ export default function GamePage() {
             )}
           </div>
 
-          {/* Game content */}
           <div className="p-6">
-            {/* Clues section */}
             <CluesList
               clues={quiz.clues}
               visibleClues={visibleClues}
@@ -238,7 +232,6 @@ export default function GamePage() {
               timeRemaining={timeRemaining}
             />
 
-            {/* Answer options or feedback */}
             {!feedback ? (
               <AnswerOptions
                 options={quiz.options}

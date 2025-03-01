@@ -2,6 +2,7 @@
 
 import Loader from "@/components/Loader";
 import { API } from "@/lib/axios";
+import { APP_NAME } from "@/utils/constants";
 import { TUser } from "@/utils/types";
 import { motion } from "framer-motion";
 import { ArrowRight, Compass, Globe, MapPin, Trophy } from "lucide-react";
@@ -134,7 +135,7 @@ function InviteUI() {
                 {inviterData.username}
               </span>{" "}
               has challenged you to test your geography knowledge in
-              Globetrotter!
+              {APP_NAME}!
             </p>
           </motion.div>
 
@@ -186,7 +187,7 @@ function InviteUI() {
         transition={{ delay: 1.2, duration: 0.8 }}
         className="text-center text-indigo-600 text-sm mt-8 max-w-md"
       >
-        Globetrotter: Test your knowledge of world geography, unlock fun facts,
+        {APP_NAME}: Test your knowledge of world geography, unlock fun facts,
         and compete with friends!
       </motion.p>
     </div>

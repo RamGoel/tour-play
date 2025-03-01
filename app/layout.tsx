@@ -1,3 +1,4 @@
+import { APP_NAME } from "@/utils/constants";
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import { Toaster } from "react-hot-toast";
@@ -10,7 +11,7 @@ const font = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Globetrotter",
+  title: APP_NAME,
   description: "Guess & Learn about new places",
   icons: [
     {
@@ -19,16 +20,16 @@ export const metadata: Metadata = {
     },
   ],
   openGraph: {
-    title: "Globetrotter",
+    title: APP_NAME,
     description: "Guess & Learn about new places",
     type: "website",
     locale: "en_US",
-    url: "https://globetrotter.com",
-    siteName: "Globetrotter",
+    url: "https://tour-play.vercel.app",
+    siteName: APP_NAME,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Globetrotter",
+    title: APP_NAME,
     description: "Guess & Learn about new places",
     creator: "@yourtwitterhandle",
   },

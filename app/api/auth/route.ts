@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import { HEADER_AUTH_KEY } from "@/utils/constants";
+import { COOKIE_KEY } from "@/utils/constants";
 import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     });
 
     if (usernameExists) {
-      (await cookies()).set(HEADER_AUTH_KEY, usernameExists.id);
+      (await cookies()).set(COOKIE_KEY, usernameExists.id);
       return Response.json(
         { error: "Username Aready Exists" },
         { status: 400 },
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     });
 
     if (newUser) {
-      (await cookies()).set(HEADER_AUTH_KEY, newUser.id);
+      (await cookies()).set(COOKIE_KEY, newUser.id);
       return Response.json(newUser);
     } else {
       throw Error();
@@ -41,7 +41,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const paramId = searchParams.get("userId");
-    const userId = (await cookies()).get(HEADER_AUTH_KEY)?.value || "";
+    const userId = (await cookies()).get(COOKIE_KEY)?.value || "";
 
     if (!userId && !paramId) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -66,7 +66,7 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const userId = (await cookies()).get(HEADER_AUTH_KEY);
+    const userId = (await cookies()).get(COOKIE_KEY);
     const { score } = await req.json();
 
     if (!userId?.value) {
@@ -84,6 +84,6 @@ export async function PUT(req: Request) {
 
     return Response.json(updatedUser);
   } catch {
-    return Response.json({ error: "Something went wrong" });
+    return Response.json({ error: "Something went wrong" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 "use client";
+import { APP_NAME } from "@/utils/constants";
 import { motion } from "framer-motion";
 import {
   Brain,
@@ -70,7 +71,7 @@ export default function LandingPage() {
               animate={isLoaded ? { x: 0, opacity: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Globetrotter
+              {APP_NAME}
             </motion.h1>
           </div>
 
@@ -253,7 +254,7 @@ export default function LandingPage() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-            Why You&apos;ll Love Globetrotter
+            Why You&apos;ll Love {APP_NAME}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Our game combines geography, history, and culture in a challenging
@@ -298,7 +299,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              How Globetrotter Works
+              How {APP_NAME} Works
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               A simple yet engaging gameplay that keeps you coming back for more
@@ -483,7 +484,7 @@ export default function LandingPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Globe className="h-6 w-6 text-indigo-400" />
-                <h3 className="text-xl font-bold">Globetrotter</h3>
+                <h3 className="text-xl font-bold">{APP_NAME}</h3>
               </div>
               <p className="text-gray-400">
                 Test your travel knowledge with clever clues and discover
@@ -590,7 +591,7 @@ export default function LandingPage() {
           </div>
 
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
-            <p>© 2025 Globetrotter. All rights reserved.</p>
+            <p>© 2025 {APP_NAME}. All rights reserved.</p>
           </div>
         </div>
       </footer>
