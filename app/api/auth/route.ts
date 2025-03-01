@@ -13,6 +13,7 @@ export async function POST(req: Request) {
     });
 
     if (usernameExists) {
+      (await cookies()).set(HEADER_AUTH_KEY, usernameExists.id);
       return Response.json(
         { error: "Username Aready Exists" },
         { status: 400 },
@@ -38,22 +39,17 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    let userId = "";
     const { searchParams } = new URL(req.url);
-    const tempId = searchParams.get("userId");
-    if (tempId) {
-      userId = tempId;
-    } else {
-      userId = (await cookies()).get(HEADER_AUTH_KEY)?.value || "";
-    }
+    const paramId = searchParams.get("userId");
+    const userId = (await cookies()).get(HEADER_AUTH_KEY)?.value || "";
 
-    if (!userId) {
+    if (!userId && !paramId) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const matchedUser = await prisma.user.findFirst({
       where: {
-        ...(tempId ? { username: tempId } : { id: userId }),
+        id: paramId || userId,
       },
     });
 

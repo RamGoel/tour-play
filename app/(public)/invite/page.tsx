@@ -14,7 +14,7 @@ function InviteUI() {
   const [inviterData, setInviterData] = useState<TUser | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
-  const inviter = searchParams.get("inviter") || "A Mystery Traveler";
+  const inviter = searchParams.get("inviter");
 
   useEffect(() => {
     if (!inviter) {
@@ -30,7 +30,6 @@ function InviteUI() {
     }
   }, [inviter, router]);
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -135,7 +134,9 @@ function InviteUI() {
 
           <motion.div variants={itemVariants} className="mb-6 text-gray-600">
             <p className="text-lg">
-              <span className="font-semibold text-purple-600">{inviter}</span>{" "}
+              <span className="font-semibold text-purple-600">
+                {inviterData.username}
+              </span>{" "}
               has challenged you to test your geography knowledge in
               Globetrotter!
             </p>

@@ -24,7 +24,7 @@ const Header = () => {
       return toast.error("Please do atleast 1 score");
     }
 
-    const url = `${window.location.origin}/invite?inviter=${encodeURIComponent(user?.username)}`;
+    const url = `${window.location.origin}/invite?inviter=${encodeURIComponent(user?.id)}`;
     setInviteLink(url);
     setShowItem(true);
 

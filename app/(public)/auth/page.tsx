@@ -2,6 +2,7 @@
 
 import { API, parseAxiosMessage } from "@/lib/axios";
 import { useStore } from "@/lib/store";
+import { AxiosError } from "axios";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -26,8 +27,13 @@ export default function AuthPage() {
       useStore.setState({ user: response.data });
       router.push("/game");
     } catch (err) {
-      toast.error(parseAxiosMessage(err));
-      console.log(err);
+      // login if already exists
+      if ((err as AxiosError)?.response?.status === 400) {
+        router.push("/game");
+      } else {
+        toast.error(parseAxiosMessage(err));
+        console.log(err);
+      }
     }
   };
 
