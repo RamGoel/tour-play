@@ -8,6 +8,7 @@ import QuizFeedback from "@/components/QuizFeedback";
 import StatsHeader from "@/components/StatsHeader";
 import { API } from "@/lib/axios";
 import { useStore } from "@/lib/store";
+import { CHARS } from "@/utils/constants";
 import { playCancelSound, playSuccessSound } from "@/utils/helpers";
 import { Feedback, Quiz, TUser } from "@/utils/types";
 import { toPng } from "html-to-image";
@@ -60,6 +61,18 @@ export default function GamePage() {
     setIsModalOpen(true);
   };
 
+  const onKeyDown = (ev: KeyboardEvent) => {
+    try {
+      ev.preventDefault();
+      console.log(ev);
+      if (CHARS.includes(ev.key?.toUpperCase())) {
+        handleAnswer(ev.key.toUpperCase());
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const startTimer = () => {
     setTimerActive(true);
     const interval = setInterval(() => {
@@ -79,8 +92,15 @@ export default function GamePage() {
     setTimerInterval(interval);
   };
 
+  // takes option text/keypressed as param
   const handleAnswer = async (answer: string) => {
     if (!quiz) return;
+
+    console.log(answer);
+    // if keystroke is passed, get option from keystroke
+    if (answer.length === 1) {
+      answer = quiz.options[CHARS.indexOf(answer)];
+    }
 
     // Clear the timer when user selects an answer
     if (timerInterval) clearInterval(timerInterval);
@@ -125,14 +145,25 @@ export default function GamePage() {
   };
 
   const fetchNewQuiz = async () => {
-    const response = await API.get("/get-quiz");
-    setQuiz(response.data);
+    setQuiz(null);
     setSelectedAnswer(null);
     setFeedback(null);
     setVisibleClues(1);
     setTimeRemaining(5);
+    setShowConfetti(false);
+    setShowSadFace(false);
     startTimer();
+    const response = await API.get("/get-quiz");
+    setQuiz(response.data);
   };
+
+  useEffect(() => {
+    window.addEventListener("keypress", onKeyDown);
+
+    return () => {
+      window.removeEventListener("keypress", onKeyDown);
+    };
+  }, [quiz]);
 
   useEffect(() => {
     fetchNewQuiz();
@@ -239,6 +270,9 @@ export default function GamePage() {
           </div>
         </div>
       </div>
+      <p className="text-sm uppercase tracking-widest opacity-70 text-black">
+        Click option, or press keys to select
+      </p>
 
       <ChallengeModal
         isOpen={isModalOpen}

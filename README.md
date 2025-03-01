@@ -19,10 +19,8 @@ Loom Walkthrough: [Video Link](#) _(Replace with your Loom URL)_
 - Allows users to enter a unique username.
 - Generates a shareable invite link with a dynamic image (via `html-to-image`).
 - Shows invitees the inviter’s score on a funky invite page.
-- Incorporates animated loader, confetti, and sad face components.
 - Ensures responsive design with Tailwind CSS.
-- Stores dataset on the backend (API routes).
-- Uses Zustand for global state management (username, animations).
+- User scores are persisted into Database.
 
 ## Tech Stack
 
